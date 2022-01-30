@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python Env
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install Python Modules
+        run: pip3 install -r requirements.txt -t .
+      - name: Zip Files
+        run: zip -r scf-lighthouse-snapshot.zip *
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            *.zip
