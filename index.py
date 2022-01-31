@@ -7,8 +7,6 @@ from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.lighthouse.v20200324 import lighthouse_client, models
 
 
-SNAPSHOT_NAME = "Snapshot-Created-by-SCF"
-
 
 class LighthouseSnapshotManager:
     def __init__(self, secret_id, secret_key, region, instance_id):
@@ -72,11 +70,12 @@ def main_handler(event, context) -> None:
     secret_key = os.environ.get("SECRET_KEY")
     region = os.environ.get("REGION")
     instance_id = os.environ.get("INSTANCE_ID")
+    snapshot_name = f"SCF-Snapshot-{instance_id}"
 
     snapshot_manager = LighthouseSnapshotManager(secret_id, secret_key, region, instance_id)
-    if len(snapshot_manager.describe(SNAPSHOT_NAME)) > 0:
+    if len(snapshot_manager.describe(snapshot_name)) > 0:
         print("检测到旧快照存在")
-        snapshot_manager.delete(SNAPSHOT_NAME)
+        snapshot_manager.delete(snapshot_name)
         print("删除旧快照成功")
-    snapshot_manager.create(SNAPSHOT_NAME)
-    print(f"创建新快照成功。快照名称：{SNAPSHOT_NAME}")
+    snapshot_manager.create(snapshot_name)
+    print(f"创建新快照成功。快照名称：{snapshot_name}")
